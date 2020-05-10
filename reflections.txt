@@ -1,0 +1,47 @@
+   1. Was there any particular type of task you overestimated/underestimated time for?
+      Can you say anything about what types of tasks you find especially hard
+      to estimate? Do you have any insight into why?
+      
+I underestimated the time for serialization and deserialization, which is quite time consuming
+and cost a lot of time to debug.I found out that it is quite hard to estimate a task that is quite abstract,
+at the beginning I actually do not know what serialization is, only when I move towards the end, I understand
+what is actually asking us to do.
+
+   2. How well did you meet your intermediate deadlines?
+
+I finished the first several tasks on time, however, for the serializaion and deserialization part, I did't make them on time
+because I underestimated the complicatness of them.
+   
+   3. Suppose your customer were to change the requirements now. How easy/hard would
+      it be to accommodate the following changes.  Why are these easy or hard?
+        o Instead of just producing Java code, your program must now
+          be accept an option for what language to produce code in: Java,
+          Python, or C++.
+        o In addition to accepting JSON specifications for the classes to produce,
+          your program must also be able to accept XML files.
+        o Your generated classes must be able to serialize/deserialize into XML
+          as well as JSON
+
+For python, it might be easier to change to because I can use more library functions in python and use them properly to
+manipulate string. For C++, I have to change a large part of implementation in serialization part because I will need to
+deal with references and pointers. As for XML, I think it is easy to accomodate because I can resuse most of the functions given.
+However, for serialization and deserialization, I need to modify lot of my code to realize that because Json and XML have such a
+defferent structure.
+          
+   4. As you have been doing this assignment, you have been learning a lot more
+      about object-oriented design.  If you had known at the start what you know
+      now, would you have done anything differently?  Would any of the design
+      patterns we learned about in class have worked well in this assignment?
+
+To begin with, I will obey more to Single Responsibility, because for some functions. I think I should have abstract them out.
+Moreover, for open close principle, I should make my code more easily to modify than now by writting more classes. Moreover, I
+should have use more inheritance so that it will be easier for me to reduce the code that I repeated writting.
+
+
+   5. What lessons did you learn from doing this assignment?  How will it inform
+      your future software development in this class, other classes, and/or
+      your professional life?
+
+I think that in the future, I should plan in more detail and start earlier. For abstract tasks, I should have make them more detailed
+and divide them into smaller parts. Only in this way will I come up with a better well-designed program. Last nut not least,
+I should stick to my plan whatever happens and do better time management.

@@ -1,0 +1,526 @@
+This assignment is a small practice to help you get acquainted with Java.
+
+Perhaps more importantly, you are going to work on breaking a task
+down into smaller pieces and planning how to accomplish a medium sized
+goal based on your own steps.
+
+Accordingly, we are only going to give you a couple of specific
+step-by-step instructions on project setup, then we are going to
+give you the requirements for the final program.
+
+***************************************************************
+*It is up to you to split these into small, step-by-step tasks*
+***************************************************************
+
+
+Initial Project Setup:
+  - Setup a repository for this assignment on gitlab. You should name the project
+     netid-json-651
+     where "netid" should be your own netid (e.g., adh39-json-651).
+  - Clone that project to your development environment (git clone...) and 
+    cd into the directory for that git repository
+  - Run
+       gradle init
+   As in the development environment setup walkthrough, you should choose:
+       project type: application
+       implementation language: Java
+       build script DSL: groovy
+       test framework: JUnit Jupiter
+       Project name: classbuilder
+       Source package name: edu.duke.ece651.classbuilder
+
+
+  - Open your build.gradle file and add the same things you did
+     in the development environment setup walkthrough, and also
+     a JSON library:
+      id 'com.bmuschko.clover' version '2.2.3'
+     to the plugins section, and
+       compile 'org.json:json:20180813'
+       clover 'org.openclover:clover:4.3.1'
+    to the dependencies section 
+    Note that the documentation for the JSON library is here:
+    https://stleary.github.io/JSON-java/
+    and the github for this library is here:
+    https://github.com/stleary/JSON-java/blob/master/README.md
+    Then (as before), add at these two blocks at level of the build.gradle file:
+test {
+  testLogging {
+     showStandardStreams = true
+     exceptionFormat = 'full'
+  }
+}
+clover {
+    compiler{
+        additionalArgs = "-g:lines,source,vars"
+    }
+}
+
+The first of these will make it so that you can see things
+you print to System.out/System.err when you run test cases.  The
+second will make it so that the compiler puts in line number information,
+so you will get more meaningful error messages from exceptions.
+
+
+  - Run
+       gradle build
+    to make gradle download the new dependency,
+    and make sure nothing goes wrong.
+    
+  - Read this README
+
+  - Break this down into small tasks. Put your task
+    breakdown into myplan.txt (more details on this at the end).
+    We should see this plan in your first git commit.
+    
+  - Implement the described piece of software.  Keep track
+    of how long the tasks actually took you in your  myplan.txt
+    file.  In your git history, we should see regular updates to
+    this file with your actual amounts of time/actual delivery dates.
+
+  - After you finish your assignment, take a moment to contemplate how
+    easy your program would be to change if we changed the
+    requirements.  You should think about the questions in "Self
+    Reflection" at the end, and then write brief answers (2--5
+    sentences each) to them in a file called "reflections.txt"
+    which you should submit via git.
+
+*** NOTE: submitting answers in reflections.txt is part of your
+          grade on this assignment.
+   
+Overview:
+
+  Your goal for this assignment is to make a program which reads
+  in a JSON file, and produces a set of Java classes (the source code)
+  based on the description in the JSON.   The resulting classes
+  will have fields/methods as described in the JSON file,
+  as well as methods to serialize and deserialize the resulting
+  objects into a JSON format.
+
+  You can think of this as having a way to take a specification
+  of the data layout you need, and create the classes for it,
+  as well as a way to save them/send them over the network/etc,
+  and then load them back.  
+
+
+Requirements:
+
+  1. There shall be a class named ClassBuilder, which shall have
+     
+       a. A constructor that takes a String.
+          This String shall be interpreted as the literal text of the
+          JSON description.
+          
+            i. This constructor should throw an appropriate exception
+               if the JSON is not valid, or does not conform to the
+               input specification requirements.
+               
+       b. A constructor that takes an InputStream. This InputStream
+          shall be read from to obtain the text of the JSON
+          description.
+          
+            ii.  This constructor should throw an appropriate
+                 exception if an IO error occurs reading from the
+                 InputStream.
+                 
+            iii. This constructor should throw an appropriate
+                 exception if the JSON is not valid, or does not
+                 conform to the input specification requirements.
+                 
+       c. A public method
+          Collection<String> getClassNames()
+          which returns the names
+          of all classes that were described by the JSON description
+          (which was read in a constructor).
+          
+             i. Note that this method shall return the simple (not
+                fully qualified) name of the class---\emph{i.e.}, if a
+                package name is specified, it is not included in the
+                name.
+                
+       d. A public method
+          String getSourceCode(String className)
+          which returns the text of the source code you have generated
+          for the specified class name.  This method should return valid
+          Java source code (could be saved to a file, and compiled with javac,
+          or an appropriately configured gradle project)
+          whenever className is a member of the return value of
+          getClassNames().  Put another way
+
+          for (String cn : cbuilder.getClassNames()) {
+            String source = cbuilder.getSourceCode(cn);
+            //do stuff with the source code
+          }
+
+          should work with no exceptions.  However, if className is
+          not a valid class name (i.e., is not in the return value of
+          getClassNames()), then this method should throw an
+          appropriate exception.
+
+        e. A public method
+            void createAllClasses(String basePath)
+          which should create one source file per class.  These should
+          all be made relative to the specified base path.  If the
+          classes are within a package, they will need to be in
+          subdirectories of that path.  If they are not in a package,
+          then they will be made directly in that path.
+         
+  2. The input JSON file shall have the following format:
+      
+      a. There shall be one top-level object. That object will have:
+      
+         i.   A required field named "classes" whose value shall be an
+              an array of class descriptions.  See 2.b for information
+              about class descriptions.
+              
+         ii.  An optional field named "package".  If this field is
+              present, its value shall be a string, which specifies
+              the package that the resulting classes shall reside in.
+              Accordingly, it must be a valid Java package name.
+              
+      b. A class description shall have the following fields:
+      
+         i.   A required field named "name" which shall be a String
+              specifying the class name.  This must be a valid Java
+              class name.
+              
+         ii.  An optional field named "fields".  If this is present,
+              its value shall be an array of one or more field
+              descriptors. See 2.c for information about field
+              descriptors.  If this field is not present, the class
+              has no fields.
+              
+      c. A field descriptor shall have the following fields:
+         
+         i.  A required field called "name" which shall be a string
+              specifying the name of the field.  Accordingly, it must
+              be a valid Java identifier.
+              
+         ii.  A required field called "type" which shall be a string
+              specifying the type of the field.  This must be one of
+              the following:
+              
+                 A. "boolean", "byte", "char","short","int", "long", "float"
+                    "double" to specify the corresponding Java
+                    primitive type
+                    
+                 B. "String" to specify a string
+                 
+                 C. Any of the class names specified in the input
+                    file to specify the corresponding class.
+                    
+                 D. A JSON object with one field named "e" whose value
+                    must be any of the types specified in this
+                    (2.c.ii) list.  Such a specification makes a
+                    sequence (e.g., array) of the type specified.  For
+                    example
+                       "type" : {"e": "int"}
+                    specifies an array of ints.  Note that the
+                    definition of this clause is recursive, so it must
+                    support arbitrary nesting.
+                      "type" : {"e": {"e": "int"}}
+                      "type" : {"e": {"e": {"e": "int"}}}
+                    etc. are all legal, and specify an array of arrays
+                    of ints, and an array of arrays of arrays of ints
+                    respectively.
+                    
+
+
+   3. Output class requirements
+       a. Every field that you generate shall be private.
+       
+       b. Fields of non-array type (all except those from 2.c.ii.D)
+          shall have public get/set methods.  These shall be named
+          with get (or set) followed by the capitalized field name.
+          For example, if the field is int height, the methods will
+          be
+            int getHeight()
+            void setHeight(int h)
+          You may name the parameters for the generated methods anything
+          you want as long as the generated code works.
+             
+       c. Array fields shall have four methods, numX, addX, getX, and setX,
+          where X is the capitalized field name.  The numX method
+          shall return the number of elements in the array.  The
+          addX method shall add an element to the end of the array.
+          The get/set methods shall take an index, and return/set
+          that particular element of the array.  For example,
+          if the field is an String array called names, then the
+          methods would be
+              int numNames()
+              void addNames(String n)
+              String getNames(int index)
+              void setNames(int index, String n)
+         Note: even though it is natural to singularize the
+         field name (addName instead of addNames), do not try to do it.
+         Just use the field name, but capitalize it.
+             
+       d. Even though we refer to these fields as "arrays" you may
+          store them internally with a different representation
+          (e.g., ArrayList)
+          
+       e. Whenever a field is a multi-dimensional array, the
+          add/get/set methods will return/take Collection<T>
+          to avoid enforcing a specific representation.  Your
+          set method must ensure that it can handle any collection.
+          For example, if the field a 2D array of ints called data,
+          then the methods would be
+            void addData(Collection<int> d)
+            Collection<int> getData(int index)
+            void setData(int index, Collection<int> d)
+            
+       f. A class with any array fields must have a constructor.
+          A class with no array fields may have a constructor if you wish.
+          The constructor should initialize all array fields to
+          a new empty array.  Non-array fields do not need
+          any explicit initialization (this may just be left
+          as the default value Java initializes their type to).
+          If you generate an explicit constructor, it must be public.
+         
+       g. Each class shall have a public method
+           JSONObject toJSON() throws JSONException
+          which shall return a JSONObject serializing the
+          state of this object, as specified in section 4.
+          
+       h. In addition to the classes specified by the input file,
+          your program should create a class called Deserializer.
+          This class shall have one public static method
+          per input class, which shall be named
+
+           public static X readX(JSONObject js) throws JSONException
+
+          here X is the name of the class (capitalized in the
+          method name).  For example, if you have input classes
+          named Person, Course, and Grade, your Deserializer
+          class would have
+
+        public static Person readPerson(JSONObject js) throws JSONException
+        public static Course readCourse(JSONObject js) throws JSONException
+        public static Grade readGrade(JSONObject js) throws JSONException
+
+          as its methods.   Each of these reads a JSON serialized
+          object (as in 4), creating a new object (and possibly
+          others that it references) and returning it.
+          
+       j.  You are NOT required to generate nicely formatted code.
+           You are certainly welcome to indent things nicely,
+           as if you had written the code in Emacs.  However,
+           if you don't it is ok.  We do suggest that you at least
+           include reasonable line breaks to make reading your output
+           (and thus, debugging it) easier.
+
+   4. Serialization requirements:
+   
+       a. The serialized output shall have one top-level JSON
+          object, which is the serialized representation of
+          the object on which toJSON() was called.
+          
+       b. The serialized representation of a Java object shall be
+          a JSON object with three fields:
+             "id": a unique id
+             "type": the name of the class (as in the input file)
+             "values": an array of field:value pairs
+          E.g., an object should look like this:
+          {"id" : uniqueid,
+           "type" : classname,
+           "values" : ["f1" : v1, "f2" : v2, ..., "fn" : vn]}
+       
+       c. The unique identifiers must be integers, and may
+          be created by any scheme you desire, so long
+          as they are unique within a particular serialization.
+
+       d. For fields which are of primitive of String type,
+          the value (in the "values" field) shall be written
+          literally.
+
+       e. For fields which are of object type, upon the first
+          occurrence of that particular instance of the object,
+          the value shall be written out by its serialized
+          representation from 4.b
+
+       f. For subsequent references to a previously serialized
+          object, the value shall be serialized as {"ref": uniqueid}
+          using the uniqueid written when the object was first
+          serialized in 4.e.
+          
+       g. For fields which are arrays, the serialized representation
+          shall be a JSON array containing the serialization
+          of the elements in the Java array.
+
+       h. Deserialization should produce one or more Java
+          objects that reconstruct the object reference graph
+          and values in those objects at the point where
+          the original object was serialized.
+          
+       i. The serialization/deserialization methods must be
+          able to handle objects with cycles in their reference
+          graph.
+
+       j. Serialization followed by deserialization must
+          produce objects that are logically equivalent.
+          Put another way, if we were to properly define
+          .equals() on our classes [which you do not
+          need to do], then
+
+              
+            Deserializer.readThing(x.toJSON()).equals(x)
+
+         should be true, and should not throw any exceptions.
+
+        k. Deserialization followed by re-serialization should
+           be idempotent.  In particular, if your scheme for generating
+           unique identifiers is deterministically repeatable, then
+
+             Deserializers.readThing(x.toJSON()).toJSON().equals(x.toJSON())
+
+           should always be true, and should not throw
+           any exceptions.   If your scheme for generating unique identifiers
+           produces different identifiers on subsequent executions, then
+           the only differences between
+             Deserializers.readThing(x.toJSON()).toJSON()
+            and
+              x.toJSON()
+            should be the particular values of the unique identifiers used.
+
+Task Breakdown and Planning:
+
+  As previously mentioned, one of the important goals of this
+  assignment is to help you practice breaking down a moderate-sized
+  task into small pieces.
+
+  To that end, you are going to write down your task plan in
+  a file called myplan.txt.  You are going to commit this
+  initially, and go over it with a TA as soon as possible.
+
+  Each entry in the file will look like this:
+
+
+1. 
+Task:  <your description of what you are going to do>
+Estimated Time:  <number of hours>
+Target Deadline:  <when you expect to have it done>
+Actual Time:
+Actual Delivery:
+Commit ID:
+Comments:
+
+2.
+Task:  <your description of what you are going to do>
+Estimated Time:  <number of hours>
+Target Deadline:  <when you expect to have it done>
+Actual Time:
+Actual Delivery:
+Commit ID:
+Comments:
+
+
+That is, you will fill in the first three fields:
+a description of what you plan to do, how long
+you think it will take (hours of work), and a target
+deadline (what day/time you expect to finish).  Note
+that for a good mapping from hours of work to target deadline,
+you should be blocking out time to work on this on your calendar.
+
+If you make this plan and find that you can't finish by the
+assignment deadline, you should contemplate if you can adjust your schedule.
+If not, then you should ask for a late day NOW rather than at the end.
+Remember: late days cost less the sooner you ask for them!
+
+Commit this plan to git and go over it with a TA.
+
+As you work through the assignment, go back to your plan,
+and fill in the other four fields:  How long (in hours) did it actually
+take you?  What day/time did you actually finish this feature?
+What git commit id represents the completion of this effort?
+Finally, add any comments you have.   These should be your own
+reflection on the accomplishments of that task.  Such comments
+might include things like:
+
+"This took way longer than I expected due to a particularly nasty bug.
+That bug was..."
+
+"Previous investment in testing infrastructure payed off
+amazingly here.  I thought this would take 3 hours, but only took
+30 minutes because...."
+
+"I did a good job estimating the time for this task, however, delivery
+was quite late as I did a poor job with time management, and did not
+find the hours to work on it that I had projected."
+
+
+
+Lastly, a piece of advice on breaking down the tasks:  Don't break
+the tasks down by going
+
+Task 1: requirement 1.a
+Task 2: requirement 1.b
+Task 3: requirement 1.c
+Task 4: requirement 1.d
+Task 5: requirement 1.e
+Task 6: requirement 2.a
+....
+Task 29: requirement 4.k
+
+Instead, think of a way to make an end-to-end solution with as
+few features as possible, then add features to it.
+
+I'll note that I started with a class, which represents one Field to
+generate, and implemented and tested it.  Even here, my first task was
+not to do *all* of the functionality of this class at once---just the
+bare basics.  For example, support for serializing/deserializing is a
+later task, after making some other classes...  You do not need to
+start in the same way (or even have a class by this name)---though,
+you, of course, can follow my example.
+
+Note that this is a non-trivial task.  You will want to spend
+some time thinking about the design of your system as you do it.
+
+
+
+Self-Reflection:
+At the end of this assignment, we want you to reflect on what you did and
+answer these questions.
+
+   1. Was there any particular type of task you overestimated/underestimated time for?
+      Can you say anything about what types of tasks you find especially hard
+      to estimate? Do you have any insight into why?
+   2. How well did you meet your intermediate deadlines?
+   3. Suppose your customer were to change the requirements now. How easy/hard would
+      it be to accommodate the following changes.  Why are these easy or hard?
+        o Instead of just producing Java code, your program must now
+          be accept an option for what language to produce code in: Java,
+          Python, or C++.
+        o In addition to accepting JSON specifications for the classes to produce,
+          your program must also be able to accept XML files.
+        o Your generated classes must be able to serialize/deserialize into XML
+          as well as JSON
+   4. As you have been doing this assignment, you have been learning a lot more
+      about object-oriented design.  If you had known at the start what you know
+      now, would you have done anything differently?  Would any of the design
+      patterns we learned about in class have worked well in this assignment?
+   5. What lessons did you learn from doing this assignment?  How will it inform
+      your future software development in this class, other classes, and/or
+      your professional life?
+      
+                   
+                   
+Deliverables check list:
+   - myplan.txt which was
+      o created in first commit and
+      o updated as you went through the project
+   - working code that fulfils the requirements above. Your TA should be able to
+      o clone your gitlab repository
+      o use gradle to build, test, and run your program
+      * as always, your code should exhibit good quality:
+         - 100% test coverage with good test cases
+         - well documented
+         - good abstraction
+         - good naming
+         - good use of OOP
+   - reflections.txt which
+       o contain the answers to the 5 questions above
+       o show that you that you have thought carefully about
+         what you have done and what you have learned.
+              
+          
+
+

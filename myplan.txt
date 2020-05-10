@@ -1,0 +1,112 @@
+1. 
+Task:  Finish myplan.txt
+Estimated Time:  1
+Target Deadline:  2020.1.27
+Actual Time: 1.5  
+Actual Delivery: 2020.1.28
+Commit ID:a7b06c5e624fce3105ad72761f04fa88e745dacb
+Comments:Should start earlier
+
+2.
+Task:  Implement the class ClassBuilder and start the project, learn about basic knowledge
+Estimated Time:  2.5
+Target Deadline: 2020.2.1
+Actual Time: 3
+Actual Delivery:2020.2.2
+Commit ID:e4dfbdb850b1c5b088b1806ecd93d08db03c6d42
+Comments:
+
+3.
+Task: Implement the constructor that takes a String
+Estimated Time:  2
+Target Deadline: 2020.2.2
+Actual Time:1
+Actual Delivery:2020.2.2
+Commit ID:e4dfbdb850b1c5b088b1806ecd93d08db03c6d42
+Comments:
+
+4.
+Task: Implement the constructor that takes an InputStream which throw an appropriate
+                 exception if an IO error occurs reading from the InputStream.
+Estimated Time:  1.5
+Target Deadline: 2020.2.2
+Actual Time:     1
+Actual Delivery: 2020.2.2
+Commit ID:e4dfbdb850b1c5b088b1806ecd93d08db03c6d42
+Comments:
+
+
+5.
+Task: Implement public method Collection<String> getClassNames()
+          which returns the names of all classes that were described
+          by the JSON description (which was read in a constructor).
+Estimated Time:  4
+Target Deadline: 2020.2.2
+Actual Time:     1
+Actual Delivery:2020.2.3
+Commit ID:84c83d415bae500b7e090dbf835da7ca398da7a2
+Comments:
+
+6.
+Task: Implemented the public method
+          String getSourceCode(String className)
+          which returns the text of the source code you have generated
+          for the specified class name.  
+Estimated Time:  4
+Target Deadline: 2020.2.3
+Actual Time:     4
+Actual Delivery: 2020.2.3
+Commit ID:84c83d415bae500b7e090dbf835da7ca398da7a2
+Comments:
+
+7.
+Task: Implemented the public method
+            void createAllClasses(String basePath)
+          which should create one source file per class.  These are
+          all be made relative to the specified base path.  If the
+          classes are within a package, they are in
+          subdirectories of that path.  If they are not in a package,
+          then they will be made directly in that path.
+Estimated Time:  4
+Target Deadline: 2020.2.4
+Actual Time:     4
+Actual Delivery: 2020.2.4
+Commit ID:84c83d415bae500b7e090dbf835da7ca398da7a2
+Comments:
+
+8.
+Task: serialization methods: Firstly wrote the code by hand and test its correctness.
+Estimated Time:  4
+Target Deadline: 2020.2.4
+Actual Time:5
+Actual Delivery:2020.2.5
+Commit ID:b16cfbf959fb17fa59e89fec53c717ea1f1a9683
+Comments:
+
+9.
+Task: serialization methods: Secondly wrote the code that can output the correct java file.
+Estimated Time:  2
+Target Deadline: 2020.2.4
+Actual Time:7
+Actual Delivery:2020.2.5
+Commit ID:b16cfbf959fb17fa59e89fec53c717ea1f1a9683
+Comments:
+
+
+10.
+Task: Deserialization methods
+Estimated Time:  5
+Target Deadline: 2020.2.5
+Actual Time:6
+Actual Delivery:2020.2.6
+Commit ID:92eb1898a97e9fbd738e13a5d5b769b59dcd2095
+Comments:
+
+11
+Task: Finish reflections
+Estimated Time:  1
+Target Deadline: 2020.2.6
+Actual Time:1
+Actual Delivery:2020.2.6
+Commit ID:34d1351496a101335fefe2c4ea8568eefe69cbb4
+Comments:
